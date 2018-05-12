@@ -3,3 +3,6 @@
 ch341prog
 *.so
 *.img
+/debian/ch341prog\.debhelper\.log
+/debian/debhelper-build-stamp
+/debian/files
