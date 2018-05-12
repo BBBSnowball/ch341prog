@@ -2,6 +2,12 @@ Ch341Prog
 ============
 A simple command line tool(programmer) interfacing with ch341a under Linux OS and macOS.
 
+This fork adds a simple Tcl extension that can be used for more fine-grained control,
+e.g. reading and writing single sectors. I have created it to debug a problem when flashing
+my laptop. That problem turned out to be a stupid user error (I forgot to erase the chip resp.
+expected the tool to automatically do that). Therefore, most of this has never been used or
+tested. See `test1.tcl` for an example.
+
 Description
 ------------
 There are a lot cheap SPI/IIC programmers based on ch341a, which can be bought
