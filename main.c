@@ -33,37 +33,7 @@
 
 int verbose;
 
-void v_print(int mode, int len) { // mode: begin=0, progress = 1
-static int size = 0;
-static time_t started,reported;
-int dur,done;
-if (!verbose) return ;
-time_t now;
-time(&now);
-switch (mode) {
-  case 0: // setup
-        size = len;
-        started = reported = now;
-        break;
-  case 1: // progress
-        if (now == started ) return ;
-        dur = now - started;
-        done = size-len;
-        if (done >0 && reported !=now) {
-        printf("Bytes: %d (%d%c),  Time: %d, ETA: %d   \r",done,
-                           (done*100)/size, '%', dur, (int) ( (1.0*dur*size)/done-dur));
-                fflush(stdout);
-                reported = now;
-                }
-        break;
-  case 2: // done
-        dur = now - started; if (dur<1) dur=1;
-        printf("Total:  %d sec,  average speed  %d  bytes per second.\n",dur, size/dur);
-        break;
-
-        break;
-}
-}
+void v_print(int mode, int len);
 
 int main(int argc, char* argv[])
 {

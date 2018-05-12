@@ -64,6 +64,8 @@ extern "C" {
 #define     CH341A_STM_I2C_750K    0x03
 #define     CH341A_STM_SPI_DBL     0x04
 
+#include <stdint.h>
+
 int32_t usbTransfer(const char * func, uint8_t type, uint8_t* buf, int len);
 int32_t ch341Configure(uint16_t vid, uint16_t pid);
 int32_t ch341SetStream(uint32_t speed);

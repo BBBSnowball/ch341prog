@@ -35,7 +35,39 @@ struct libusb_device_handle *devHandle = NULL;
 struct sigaction saold;
 int force_stop = 0;
 
-void v_print(int mode, int len) ;
+extern int verbose;
+void v_print(int mode, int len) { // mode: begin=0, progress = 1
+  static int size = 0;
+  static time_t started,reported;
+  int dur,done;
+  if (!verbose) return ;
+  time_t now;
+  time(&now);
+  switch (mode) {
+  case 0: // setup
+    size = len;
+    started = reported = now;
+    break;
+  case 1: // progress
+    if (now == started ) return ;
+    dur = now - started;
+    done = size-len;
+    if (done >0 && reported !=now) {
+      printf("Bytes: %d (%d%c),  Time: %d, ETA: %d   \r",done,
+             (done*100)/size, '%', dur, (int) ( (1.0*dur*size)/done-dur));
+      fflush(stdout);
+      reported = now;
+    }
+    break;
+  case 2: // done
+    dur = now - started; if (dur<1) dur=1;
+    printf("Total:  %d sec,  average speed  %d  bytes per second.\n",dur, size/dur);
+    break;
+
+    break;
+  }
+}
+
 
 /* SIGINT handler */
 void sig_int(int signo)
@@ -374,7 +406,6 @@ int32_t ch341SpiRead(uint8_t *buf, uint32_t add, uint32_t len)
     xferBulkIn  = libusb_alloc_transfer(0);
     xferBulkOut = libusb_alloc_transfer(0);
 
-    printf("Read started!\n");
     while (len > 0) {
         v_print( 1, len); // verbose
         fflush(stdout);
@@ -426,6 +457,7 @@ int32_t ch341SpiRead(uint8_t *buf, uint32_t add, uint32_t len)
             force_stop = 0;
             if (len > 0)
                 fprintf(stderr, "User hit Ctrl+C, reading unfinished.\n");
+            ret = -1;
             break;
         }
     }
@@ -455,7 +487,6 @@ int32_t ch341SpiWrite(uint8_t *buf, uint32_t add, uint32_t len)
     xferBulkIn  = libusb_alloc_transfer(0);
     xferBulkOut = libusb_alloc_transfer(0);
 
-    printf("Write started!\n");
     while (len > 0) {
         v_print(1, len);
 
@@ -522,6 +553,7 @@ int32_t ch341SpiWrite(uint8_t *buf, uint32_t add, uint32_t len)
             force_stop = 0;
             if (len > 0)
                 fprintf(stderr, "User hit Ctrl+C, writing unfinished.\n");
+            ret = -1;
             break;
         }
     }

@@ -1,3 +1,5 @@
 *.o
 *~
 ch341prog
+*.so
+*.img
